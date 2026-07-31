@@ -17,6 +17,9 @@ spec:
         app: app1nginxaks
 
     spec:
+      imagePullSecrets:
+      - name: acr-secret
+      
       containers:
       - name: app1nginxaks
 
