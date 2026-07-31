@@ -4,7 +4,6 @@ kind: Application
 
 metadata:
   name: app1
-
   namespace: argocd
 
 spec:
@@ -13,17 +12,19 @@ spec:
 
   source:
 
-    repoURL: https://vinayaknishad@dev.azure.com/vinayaknishad/azure-devops-pipeline/_git/azure-devops-pipeline
+    repoURL: https://github.com/nishadZC/gitops-repo.git
 
     targetRevision: main
 
     path: app1
+
 
   destination:
 
     server: https://kubernetes.default.svc
 
     namespace: app1
+
 
   syncPolicy:
 
@@ -32,6 +33,7 @@ spec:
       prune: true
 
       selfHeal: true
+
 
     syncOptions:
 
