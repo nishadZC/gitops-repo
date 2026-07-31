@@ -20,7 +20,7 @@ spec:
       containers:
       - name: app1nginxaks
 
-        image: akscontaineregistrydemo.azurecr.io/app1nginxaks:1
+        image: akscontaineregistrydemo.azurecr.io/app1nginxaks:83
 
         imagePullPolicy: Always
 
