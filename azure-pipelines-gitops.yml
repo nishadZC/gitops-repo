@@ -1,0 +1,68 @@
+trigger:
+- none
+
+
+variables:
+
+- name: ContainerRegistry
+  value: akscontaineregistrydemo.azurecr.io
+
+- name: imageRepository
+  value: app1nginxaks
+
+- name: vmImageName
+  value: ubuntu-latest
+
+
+pool:
+  vmImage: $(vmImageName)
+
+
+steps:
+
+
+- checkout: self
+
+
+- script: |
+
+    set -e
+
+
+    sudo wget https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64 \
+    -O /usr/local/bin/yq
+
+    sudo chmod +x /usr/local/bin/yq
+
+
+    cd app1
+
+
+    echo "Updating image tag..."
+
+    yq -i '
+    .spec.template.spec.containers[0].image =
+    "$(ContainerRegistry)/$(imageRepository):$(IMAGE_TAG)"
+    ' deployment.yml
+
+
+    echo "New image:"
+    yq '.spec.template.spec.containers[0].image' deployment.yml
+
+
+    git config user.email "azurepipeline@gmail.com"
+
+    git config user.name "Azure Pipeline"
+
+
+    git add deployment.yml
+
+
+    git diff --cached --quiet || \
+    git commit -m "Update image $(IMAGE_TAG)"
+
+
+    git push origin main
+
+
+  displayName: Update GitOps Manifest
