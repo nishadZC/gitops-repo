@@ -3,29 +3,21 @@ kind: Deployment
 metadata:
   name: app1nginxaks
   namespace: app1
-
 spec:
   replicas: 2
-
   selector:
     matchLabels:
       app: app1nginxaks
-
   template:
     metadata:
       labels:
         app: app1nginxaks
-
     spec:
       imagePullSecrets:
-      - name: acr-secret
-      
+        - name: acr-secret
       containers:
-      - name: app1nginxaks
-
-        image: akscontaineregistrydemo.azurecr.io/app1nginxaks:85
-
-        imagePullPolicy: Always
-
-        ports:
-        - containerPort: 80
+        - name: app1nginxaks
+          image: akscontaineregistrydemo.azurecr.io/app1nginxaks:54102b04dbef3ea39988ea2f65b38c27afeb9a36
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
