@@ -1,5 +1,18 @@
-trigger:
-- none
+trigger: none
+
+
+resources:
+
+  pipelines:
+
+  - pipeline: app1-ci
+
+    source: azure-pipelines-ci
+
+    trigger:
+
+    - main
+
 
 
 variables:
@@ -11,30 +24,48 @@ variables:
   value: app1nginxaks
 
 - name: tag
-  value: $(Build.SourceVersion)
+  value: $[ resources.pipeline.app1-ci.sourceCommit ]
 
-- name: vmImageName
-  value: ubuntu-latest
+
+
+pool:
+
+  vmImage: ubuntu-latest
+
 
 
 steps:
 
 
 - checkout: self
+
   persistCredentials: true
 
+  fetchDepth: 0
+
+
+
 - script: |
+
+    set -e
+
 
     sudo wget https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64 \
     -O /usr/local/bin/yq
 
+
     sudo chmod +x /usr/local/bin/yq
 
 
-    git checkout main
+
+    git fetch origin main
+
+    git checkout -B main origin/main
+
 
 
     cd app1
+
 
 
     yq -i '
@@ -43,18 +74,23 @@ steps:
     ' deployment.yml
 
 
+
     git config user.email "azurepipeline@gmail.com"
 
     git config user.name "Azure Pipeline"
 
 
+
     git add deployment.yml
 
 
-    git commit -m "Update image $(tag) in deployment.yml"
+
+    git diff --cached --quiet || \
+    git commit -m "Update image $(tag)"
 
 
-    git push origin HEAD:main
+
+    git push origin main
 
 
   displayName: Update GitOps Manifest
