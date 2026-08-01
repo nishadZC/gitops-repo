@@ -21,7 +21,7 @@ steps:
 
 
 - checkout: self
-
+  persistCredentials: true
 
 - script: |
 
@@ -29,6 +29,9 @@ steps:
     -O /usr/local/bin/yq
 
     sudo chmod +x /usr/local/bin/yq
+
+
+    git checkout main
 
 
     cd app1
