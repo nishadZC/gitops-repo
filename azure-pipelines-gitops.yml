@@ -1,96 +1,55 @@
 trigger: none
 
-
-resources:
-
-  pipelines:
-
-  - pipeline: app1-ci
-
-    source: azure-pipelines-ci
-
-    trigger:
-
-    - main
-
-
+parameters:
+- name: imageTag
+  type: string
+  default: ""
 
 variables:
-
 - name: ContainerRegistry
   value: akscontaineregistrydemo.azurecr.io
 
 - name: imageRepository
   value: app1nginxaks
 
-- name: tag
-  value: $[ resources.pipeline.app1-ci.sourceCommit ]
-
-
-
 pool:
-
   vmImage: ubuntu-latest
-
-
 
 steps:
 
-
 - checkout: self
-
   persistCredentials: true
-
   fetchDepth: 0
 
-
-
-- script: |
+- bash: |
 
     set -e
 
-
     sudo wget https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64 \
-    -O /usr/local/bin/yq
-
+      -O /usr/local/bin/yq
 
     sudo chmod +x /usr/local/bin/yq
 
-
-
     git fetch origin main
-
     git checkout -B main origin/main
-
-
 
     cd app1
 
-
-
     yq -i '
     .spec.template.spec.containers[0].image =
-    "$(ContainerRegistry)/$(imageRepository):$(tag)"
+    "$(ContainerRegistry)/$(imageRepository):${{ parameters.imageTag }}"
     ' deployment.yml
 
-
-
     git config user.email "azurepipeline@gmail.com"
-
     git config user.name "Azure Pipeline"
-
-
 
     git add deployment.yml
 
-
-
-    git diff --cached --quiet || \
-    git commit -m "Update image $(tag)"
-
-
-
-    git push origin main
-
+    if git diff --cached --quiet; then
+        echo "No changes"
+    else
+        git commit -m "Deploy ${{ parameters.imageTag }}"
+        git push origin main
+    fi
 
   displayName: Update GitOps Manifest
