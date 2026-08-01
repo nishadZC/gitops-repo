@@ -54,7 +54,7 @@ steps:
     git commit -m "Update image $(tag) in deployment.yml"
 
 
-    git push origin main
+    git push origin HEAD:main
 
 
   displayName: Update GitOps Manifest
