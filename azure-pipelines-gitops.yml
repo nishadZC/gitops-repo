@@ -10,12 +10,11 @@ variables:
 - name: imageRepository
   value: app1nginxaks
 
+- name: tag
+  value: $(Build.SourceVersion)
+
 - name: vmImageName
   value: ubuntu-latest
-
-
-pool:
-  vmImage: $(vmImageName)
 
 
 steps:
@@ -26,9 +25,6 @@ steps:
 
 - script: |
 
-    set -e
-
-
     sudo wget https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64 \
     -O /usr/local/bin/yq
 
@@ -38,16 +34,10 @@ steps:
     cd app1
 
 
-    echo "Updating image tag..."
-
     yq -i '
     .spec.template.spec.containers[0].image =
-    "$(ContainerRegistry)/$(imageRepository):$(IMAGE_TAG)"
+    "$(ContainerRegistry)/$(imageRepository):$(tag)"
     ' deployment.yml
-
-
-    echo "New image:"
-    yq '.spec.template.spec.containers[0].image' deployment.yml
 
 
     git config user.email "azurepipeline@gmail.com"
@@ -58,8 +48,7 @@ steps:
     git add deployment.yml
 
 
-    git diff --cached --quiet || \
-    git commit -m "Update image $(IMAGE_TAG)"
+    git commit -m "Update image $(tag) in deployment.yml"
 
 
     git push origin main
