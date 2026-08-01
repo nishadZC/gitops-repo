@@ -1,5 +1,8 @@
 trigger: none
 
+pool:
+  vmImage: ubuntu-latest
+
 parameters:
 - name: imageTag
   type: string
@@ -12,8 +15,6 @@ variables:
 - name: imageRepository
   value: app1nginxaks
 
-pool:
-  vmImage: ubuntu-latest
 
 steps:
 
