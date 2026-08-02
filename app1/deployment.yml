@@ -17,7 +17,7 @@ spec:
         - name: acr-secret
       containers:
         - name: app1nginxaks
-          image: akscontaineregistrydemo.azurecr.io/app1nginxaks:101
+          image: akscontaineregistrydemo.azurecr.io/app1nginxaks:107
           imagePullPolicy: Always
           ports:
             - containerPort: 80
