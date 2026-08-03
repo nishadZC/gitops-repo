@@ -1,0 +1,6 @@
+namespace: qa
+
+replicaCount: 2
+
+image:
+  tag: "111"

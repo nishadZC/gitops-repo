@@ -1,0 +1,73 @@
+---
+# Source: app1/templates/service.yaml
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: app1nginxaks
+  namespace: dev
+
+spec:
+  selector:
+    app: app1nginxaks
+
+  ports:
+  - port: 80
+    targetPort: 80
+
+  type: ClusterIP
+---
+# Source: app1/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: app1nginxaks
+  namespace: dev
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: app1nginxaks
+
+  template:
+    metadata:
+      labels:
+        app: app1nginxaks
+
+    spec:
+      imagePullSecrets:
+        - name: acr-secret
+
+      containers:
+      - name: app1nginxaks
+        image: "akscontaineregistrydemo.azurecr.io/app1nginxaks:111"
+        imagePullPolicy: Always
+
+        ports:
+        - containerPort: 80
+---
+# Source: app1/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+
+metadata:
+  name: app1nginxaks
+  namespace: dev
+
+spec:
+  ingressClassName: nginx
+
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+
+        backend:
+          service:
+            name: app1nginxaks
+            port:
+              number: 80

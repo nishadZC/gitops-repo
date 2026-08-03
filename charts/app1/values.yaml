@@ -1,0 +1,20 @@
+namespace: app1
+
+replicaCount: 2
+
+image:
+  repository: akscontaineregistrydemo.azurecr.io/app1nginxaks
+  tag: "111"
+  pullPolicy: Always
+
+imagePullSecrets:
+  - name: acr-secret
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: nginx
+  path: /

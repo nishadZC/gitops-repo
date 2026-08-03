@@ -1,0 +1,6 @@
+namespace: dev
+
+replicaCount: 1
+
+image:
+  tag: "111"

@@ -1,0 +1,6 @@
+namespace: prod
+
+replicaCount: 4
+
+image:
+  tag: "111"
